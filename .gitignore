@@ -1,0 +1,12 @@
+_build
+*.byte
+*.docdir
+
+setup.data
+setup.log
+notes.txt
+scratch.js
+server.js
+exhaust_api.js
+.tern-port
+chat_server.js
