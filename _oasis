@@ -26,7 +26,7 @@ Library socket_io
   Path:         src
   Modules:      Socket_io
   CompiledObject: byte
-  BuildDepends: js_of_ocaml, js_of_ocaml.ppx
+  BuildDepends: js_of_ocaml, js_of_ocaml.ppx, nodejs
 
 Executable run_tests
   Install:false
