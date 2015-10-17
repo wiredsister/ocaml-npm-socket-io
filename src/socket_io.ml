@@ -21,7 +21,7 @@ end
 
 class type socket_io = object
   inherit Nodejs.Events.event_emitter
-  method listen : Nodejs.Http.server -> socket_io Js.t Js.meth
+  method listen : Nodejs.Http.server Js.t -> socket_io Js.t Js.meth
   method sockets : namespace Js.t Js.readonly_prop
   method emit_ :
     Js.js_string Js.t ->
