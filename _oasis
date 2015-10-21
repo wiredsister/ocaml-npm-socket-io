@@ -1,7 +1,7 @@
 OASISFormat: 0.4
 Name:        socket_io
-Version:     0.0.1
-Synopsis:    OCaml js_of_ocaml bindings for npm's socket.io
+Version:     0.1
+Synopsis:    js_of_ocaml bindings for npm's socket.io
 Authors:     Edgar Aroutiounian <edgar.factorial@gmail.com>
 Maintainers: Edgar Aroutiounian <edgar.factorial@gmail.com>
 Homepage:    https://github.com/fxfactorial/ocaml-npm-socket-io
@@ -10,7 +10,7 @@ Plugins:     META (0.4), DevFiles (0.4)
 BuildTools: ocamlbuild
 
 Description:
-  These are OCaml bindings to npm's socket.io package
+  These are js_of_ocaml bindings to npm's socket.io package
 
   To be used with NodeJS, easily create nodejs based servers
 
