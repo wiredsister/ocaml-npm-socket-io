@@ -1,34 +1,13 @@
 module Raw_js = struct
 
-  type js_str = Js.js_string Js.t
-
   class type client = object end
-
-  class type socket = object
-    method username : js_str Js.readonly_prop
-    method client : client Js.t Js.readonly_prop
-    method broadcast : socket Js.t Js.readonly_prop
-    method emit :
-      js_str ->
-      <username : js_str; message : js_str> Js.t ->
-      unit Js.meth
-    method on : js_str -> (Js.Unsafe.any Js.t -> unit) Js.callback -> unit Js.meth
-  end
-
-  class type namespace = object
-    method emit : js_str -> ('a Js.t -> unit) Js.callback -> unit Js.meth
-    method on : js_str -> (socket Js.t -> unit) Js.callback -> unit Js.meth
-  end
-
-  class type server = object
-    method on : js_str -> (socket Js.t -> unit) Js.callback -> unit Js.meth
-  end
+  class type socket = object end
+  class type namespace = object end
+  class type server = object end
 
   class type socket_io = object
     method listen : Nodejs.Http.server -> socket_io Js.t Js.meth
     method sockets : namespace Js.t Js.readonly_prop
-    method call_arg : 'a Js.t -> server Js.t Js.meth
-    method emit : js_str -> 'a Js.t -> unit Js.meth
   end
 
 end
@@ -56,8 +35,8 @@ class namespace raw_js = object(self)
     in
     Nodejs.m raw_js "on" [|Nodejs.i "connection"; Nodejs.i wrapped_listener|]
 
-  method emit (s : string) (f : (Js.Unsafe.any -> unit)) : unit =
-    Nodejs.m raw_js "emit" [|Nodejs.i s; Nodejs.i f|]
+  method emit (s : string) (anything : Js.Unsafe.any) : unit =
+    Nodejs.m raw_js "emit" [|Nodejs.i s; anything|]
 
 end
 
