@@ -1,4 +1,6 @@
-open Nodejs_kit
+(* open Nodejs_kit *)
+
+type js_str = Js.js_string Js.t
 
 class type client = object
   (* method conn :  *)
@@ -6,11 +8,8 @@ end
 
 (** A socket object, not the module *)
 class type socket = object
-
   method username : js_str Js.readonly_prop
-
   method client : client Js.t Js.readonly_prop
-
   method broadcast : socket Js.t Js.readonly_prop
 
   method emit :
@@ -42,7 +41,7 @@ let server : (unit -> server Js.t) Js.constr =
 (** The module object socket.io *)
 class type socket_io = object
 
-  method listen : Nodejs.Http.server Js.t -> socket_io Js.t Js.meth
+  method listen : Nodejs.Http.server -> socket_io Js.t Js.meth
 
   method sockets : namespace Js.t Js.readonly_prop
 
@@ -52,5 +51,6 @@ class type socket_io = object
 
 end
 
+
 let require () : socket_io Js.t =
-  Nodejs_kit.require "socket.io"
+  Nodejs.require_module "socket.io"
