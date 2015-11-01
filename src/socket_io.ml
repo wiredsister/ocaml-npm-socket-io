@@ -1,6 +1,3 @@
-
-
-
 module Raw_js = struct
   type js_str = Js.js_string Js.t
   class type client = object end
@@ -61,8 +58,6 @@ class socket_io js_obj = object
     new namespace (Nodejs.g js_obj "sockets")
 
 end
-
-(* type 'a modules += Socket : (module ) *)
 
 let require () =
   new socket_io (Nodejs.require_module "socket.io")
