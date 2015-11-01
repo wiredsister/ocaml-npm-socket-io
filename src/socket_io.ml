@@ -1,3 +1,5 @@
+open Nodejs
+
 module Raw_js = struct
   type js_str = Js.js_string Js.t
   class type client = object end
@@ -55,9 +57,9 @@ class socket_io js_obj = object
     new socket_io (js_obj##listen s)
 
   method sockets : namespace =
-    new namespace (Nodejs.g js_obj "sockets")
+    new namespace (js_obj <!> "sockets")
 
 end
 
 let require () =
-  new socket_io (Nodejs.require_module "socket.io")
+  new socket_io (require_module "socket.io")
