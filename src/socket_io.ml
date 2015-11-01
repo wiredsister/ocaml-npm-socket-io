@@ -1,55 +1,68 @@
-module Raw_js = struct
 
+
+
+module Raw_js = struct
+  type js_str = Js.js_string Js.t
   class type client = object end
-  class type socket = object end
-  class type namespace = object end
-  class type server = object end
+
+  class type socket = object
+    method username : js_str Js.readonly_prop
+    method client : client Js.t Js.readonly_prop
+    method broadcast : socket Js.t Js.readonly_prop
+    method on : js_str -> (Js.Unsafe.any -> unit) Js.callback -> unit Js.meth
+  end
+  class type namespace = object
+    method emit : js_str -> ('a Js.t -> unit) Js.callback -> unit Js.meth
+    method on : js_str -> (socket -> unit) Js.callback -> unit Js.meth
+  end
+
+  class type server = object
+
+    method on : js_str -> (socket Js.t -> unit) Js.callback -> unit Js.meth
+
+  end
+
+  let server : (unit -> server Js.t) Js.constr =
+    Js.Unsafe.js_expr "require(\"socket.io\")"
 
   class type socket_io = object
     method listen : Nodejs.Http.server -> socket_io Js.t Js.meth
     method sockets : namespace Js.t Js.readonly_prop
+    method emit : js_str -> 'a Js.t -> unit Js.meth
   end
-
 end
 
-class socket raw_js = object
+class socket js_obj = object
 
   method on
       ~event_name:(event_name : string)
       (f : (Js.Unsafe.any -> unit)) : unit =
-    Nodejs.m raw_js "on" [|Nodejs.i event_name; Nodejs.i f|]
-
-  method id : string =
-    Nodejs.g raw_js "id" |> Js.to_string
+    js_obj##on (Js.string event_name) (Js.wrap_callback f)
 
 end
 
-class namespace raw_js = object(self)
-
-  method name =
-    Nodejs.g raw_js "name" |> Js.to_string
+class namespace js_obj = object
 
   method on_connection (f : (socket -> unit)) : unit =
-    let wrapped_listener = fun this_socket ->
-      f (new socket this_socket)
-    in
-    Nodejs.m raw_js "on" [|Nodejs.i "connection"; Nodejs.i wrapped_listener|]
+    let wrapped_f = fun this_socket -> f (new socket this_socket) in
+    js_obj##on (Js.string "connection") (Js.wrap_callback wrapped_f)
 
-  method emit (s : string) (anything : Js.Unsafe.any) : unit =
-    Nodejs.m raw_js "emit" [|Nodejs.i s; anything|]
+  method emit ~event_name:(event_name : string) (a : Js.Unsafe.any) : unit =
+    js_obj##emit (Js.string event_name) a
 
 end
 
-class socket_io raw_js = object(self)
+class socket_io js_obj = object
 
   method listen (s : Nodejs.Http.server) : socket_io =
-    new socket_io (raw_js##listen s)
+    new socket_io (js_obj##listen s)
 
   method sockets : namespace =
-    new namespace raw_js##.sockets
+    new namespace (Nodejs.g js_obj "sockets")
 
 end
 
+(* type 'a modules += Socket : (module ) *)
+
 let require () =
-  let raw_js : Raw_js.socket_io Js.t = Nodejs.require_module "socket.io" in
-  new socket_io raw_js
+  new socket_io (Nodejs.require_module "socket.io")
