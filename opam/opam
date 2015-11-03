@@ -23,6 +23,7 @@ build-test: [
 ]
 depends: [
   "js_of_ocaml"
+  "nodejs"
   "oasis" {build & >= "0.4"}
   "ocamlfind" {build}
 ]
