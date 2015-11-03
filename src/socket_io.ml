@@ -36,7 +36,7 @@ class socket js_obj = object
   method on
       ~event_name:(event_name : string)
       (f : (Js.Unsafe.any -> unit)) : unit =
-    js_obj##on (Js.string event_name) (Js.wrap_callback f)
+    js_obj##on (Js.string event_name) !@f
 
 end
 
@@ -44,7 +44,7 @@ class namespace js_obj = object
 
   method on_connection (f : (socket -> unit)) : unit =
     let wrapped_f = fun this_socket -> f (new socket this_socket) in
-    js_obj##on (Js.string "connection") (Js.wrap_callback wrapped_f)
+    js_obj##on (Js.string "connection") !@wrapped_f
 
   method emit ~event_name:(event_name : string) (a : Js.Unsafe.any) : unit =
     js_obj##emit (Js.string event_name) a
