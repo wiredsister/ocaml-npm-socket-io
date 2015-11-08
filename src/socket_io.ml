@@ -38,6 +38,8 @@ class socket js_obj = object
       (f : (Js.Unsafe.any -> unit)) : unit =
     js_obj##on (Js.string event_name) !@f
 
+  method id = js_obj <!> "id" |> Js.to_string
+
 end
 
 class namespace js_obj = object
